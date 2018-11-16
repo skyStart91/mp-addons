@@ -5,7 +5,7 @@ The ThinkPHP5 Addons Package
 https://github.com/5ini99/think-addons
 
 ## 安装
-> composer require skystart91/mp-addons:dev-master
+> composer require skystart91/mp-addons
 
 ## 配置
 ### 公共配置
