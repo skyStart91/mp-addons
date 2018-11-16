@@ -1,6 +1,9 @@
 # think-addons
 The ThinkPHP5 Addons Package
 
+## 感谢
+https://github.com/5ini99/think-addons
+
 ## 安装
 > composer require mp-addons/addons
 
