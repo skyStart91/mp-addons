@@ -2,6 +2,7 @@
     "name": "skystart91/mp-addons",
     "description": "a simple hook",
     "type": "library",
+    "version": "0.1.0",
     "require": {
         "php": ">=5.4.0",
         "topthink/think-helper": ">=1.0.4",
