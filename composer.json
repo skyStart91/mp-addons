@@ -1,0 +1,18 @@
+{
+    "name": "skystart91/mp-addons",
+    "description": "a simple hook",
+    "type": "composer-plugin",
+    "require": {
+        "php": ">=5.4.0",
+        "topthink/think-helper": ">=1.0.4",
+        "topthink/think-installer": ">=1.0.10"
+    },
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "mp",
+            "email": "1912959071@qq.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}
