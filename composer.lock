@@ -7,7 +7,7 @@
     "content-hash": "6229f39fc439b36df78a6dc329211579",
     "packages": [
         {
-            "name": "mp-addons/addons",
+            "name": "skyStart91/mp-addons",
             "version": "dev-master",
             "source": {
                 "type": "git",
