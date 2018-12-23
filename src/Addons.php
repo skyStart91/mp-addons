@@ -12,7 +12,6 @@ namespace think;
 
 use think\Config;
 use think\View;
-use think\Db;
 
 /**
  * 插件基类
@@ -84,26 +83,17 @@ abstract class Addons
         if (isset($_config[$name])) {
             return $_config[$name];
         }
-        $map['name'] = $name;
-        $map['status'] = 1;
+        // $map['name'] = $name;
+        // $map['status'] = 1;
         $config = [];
         if (is_file($this->config_file)) {
             $temp_arr = include $this->config_file;
             foreach ($temp_arr as $key => $value) {
-                if ($value['type'] == 'group') {
-                    foreach ($value['options'] as $gkey => $gvalue) {
-                        foreach ($gvalue['options'] as $ikey => $ivalue) {
-                            $config[$ikey] = $ivalue['value'];
-                        }
-                    }
-                } else {
-                    $config[$key] = $temp_arr[$key]['value'];
-                }
+                $config[$value['title']] = $value['value'];
             }
             unset($temp_arr);
         }
         $_config[$name] = $config;
-
         return $config;
     }
 
@@ -123,7 +113,7 @@ abstract class Addons
      */
     final public function checkInfo()
     {
-        $info_check_keys = ['name', 'title', 'description', 'status', 'author', 'version'];
+        $info_check_keys = ['title', 'type', 'description', 'status', 'author', 'version'];
         foreach ($info_check_keys as $value) {
             if (!array_key_exists($value, $this->info)) {
                 return false;
