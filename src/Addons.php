@@ -44,6 +44,7 @@ abstract class Addons
     public $info = [];
     public $addons_path = '';
     public $config_file = '';
+    protected $baseConfig_path = '';
 
     /**
      * 架构函数
@@ -56,6 +57,10 @@ abstract class Addons
         // 读取当前插件配置信息
         if (is_file($this->addons_path . 'config.php')) {
             $this->config_file = $this->addons_path . 'config.php';
+        }
+        // 读取基本配置
+        if (is_file($this->addons_path . 'baseConfig.php')) {
+            $this->baseConfig_path = $this->addons_path . 'baseConfig.php';
         }
 
         // 初始化视图模型
@@ -83,8 +88,6 @@ abstract class Addons
         if (isset($_config[$name])) {
             return $_config[$name];
         }
-        // $map['name'] = $name;
-        // $map['status'] = 1;
         $config = [];
         if (is_file($this->config_file)) {
             $temp_arr = include $this->config_file;
@@ -108,12 +111,22 @@ abstract class Addons
     }
 
     /**
+     * 读取基础配置
+     */
+    public function getInfo($name = ''){
+        if(empty($name)) $name = $this->getName();
+        $this->info = include $this->baseConfig_path;
+    }
+
+    /**
      * 检查配置信息是否完整
      * @return bool
      */
     final public function checkInfo()
     {
-        $info_check_keys = ['title', 'type', 'description', 'status', 'author', 'version'];
+        // 获取基本的插件信息
+        $this->getInfo();
+        $info_check_keys = ['name', 'type', 'description', 'status', 'author', 'version'];
         foreach ($info_check_keys as $value) {
             if (!array_key_exists($value, $this->info)) {
                 return false;

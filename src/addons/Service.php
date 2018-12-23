@@ -8,6 +8,7 @@ class Service{
 	public function getUnZipAddons($name = '', $conflict = false){
 		if(empty($name)) throw new Exception('解压文件不能为空');
 		$zipFilePath = RUNTIME_PATH.'addons'.DS.$name.'.zip';
+		if(!is_file($zipFilePath)) throw new Exception($name.'文件不存在');
 		// 解压目录
 		$dir = ADDON_PATH.$name.DS;
 		if(class_exists('ZipArchive')){
@@ -16,6 +17,7 @@ class Service{
 			if($zip->open($zipFilePath) != true){
 				throw new Exception('打开压缩文件错误');
 			}
+			exit;
 			// 冲突检测
 			if($conflict && (self::conflictAddons($name) === false)) throw new Exception('该文件已冲突,请重新修改名称');
 			// 解压文件
@@ -35,6 +37,22 @@ class Service{
 	 */
 	public function backUpAddons(){
 
+	}
+
+	/**
+	 * 查看插件配置是否完整
+	 */
+	public function checkAddonsFullConfig($name){
+		// 检测插件是否存在
+		if(!$name) throw new Exception('插件不存在');
+		
+		// 检查配置的完整性
+		$sAddons = get_addon_class($name);
+		$oAddons = new $sAddons;
+		if(!$oAddons->checkInfo()){
+			throw new Exception('插件配置不完整');
+		}
+		return true;
 	}
 
 	/**
