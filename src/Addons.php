@@ -90,11 +90,12 @@ abstract class Addons
         }
         $config = [];
         if (is_file($this->config_file)) {
-            $temp_arr = include $this->config_file;
-            foreach ($temp_arr as $key => $value) {
-                $config[$value['title']] = $value['value'];
-            }
-            unset($temp_arr);
+            $config = include $this->config_file;
+            // $temp_arr = include $this->config_file;
+            // foreach ($temp_arr as $key => $value) {
+            //     $config[$value['title']] = $value['value'];
+            // }
+            // unset($temp_arr);
         }
         $_config[$name] = $config;
         
