@@ -97,6 +97,7 @@ abstract class Addons
             unset($temp_arr);
         }
         $_config[$name] = $config;
+        
         return $config;
     }
 

@@ -9,6 +9,6 @@
 // | Author: Byron Sampson <xiaobo.sun@qq.com>
 // +----------------------------------------------------------------------
 
-return [
-    'addons_on' => true
-];
+// return [
+//     'addons_on' => true
+// ];

@@ -32,19 +32,15 @@ Loader::addNamespace('addons', ADDON_PATH);
 
 // 闭包自动识别插件目录配置
 Hook::add('app_init', function () {
-    // 获取开关
-    $autoload = (bool)Config::get('addons.autoload', false);
-    // 非正是返回
-    if (!$autoload) {
-        return;
-    }
     // 当debug时不缓存配置
     $config = App::$debug ? [] : Cache::get('addons', []);
     if (empty($config)) {
         // 读取addons的配置
         $config = (array)Config::get('addons');
+        
         // 读取插件目录及钩子列表
         $base = get_class_methods("\\think\\Addons");
+
         // 读取插件目录中的php文件
         foreach (glob(ADDON_PATH . '*/*.php') as $addons_file) {
             // 格式化路径信息
@@ -55,16 +51,14 @@ Hook::add('app_init', function () {
             if (strtolower($info['filename']) == strtolower($name)) {
                 // 读取出所有公共方法
                 $methods = (array)get_class_methods("\\addons\\" . $name . "\\" . $info['filename']);
+                
                 // 跟插件基类方法做比对，得到差异结果
                 $hooks = array_diff($methods, $base);
+                
                 // 循环将钩子方法写入配置中
                 foreach ($hooks as $hook) {
                     if (!isset($config['hooks'][$hook])) {
                         $config['hooks'][$hook] = [];
-                    }
-                    // 兼容手动配置项
-                    if (is_string($config['hooks'][$hook])) {
-                        $config['hooks'][$hook] = explode(',', $config['hooks'][$hook]);
                     }
                     if (!in_array($name, $config['hooks'][$hook])) {
                         $config['hooks'][$hook][] = $name;
@@ -74,11 +68,9 @@ Hook::add('app_init', function () {
         }
         Cache::set('addons', $config);
     }
-    Config::set('addons', $config);
-});
 
-// 闭包初始化行为
-Hook::add('app_init', function () {
+    Config::set('addons', $config);
+
     // 获取系统配置
     $data = App::$debug ? [] : Cache::get('hooks', []);
     $addons = (array)Config::get('addons.hooks');
@@ -92,24 +84,15 @@ Hook::add('app_init', function () {
                 $values = (array)$values;
             }
             $addons[$key] = array_filter(array_map('get_addon_class', $values));
+            
             Hook::add($key, $addons[$key]);
         }
         Cache::set('hooks', $addons);
     } else {
+        
         Hook::import($data, false);
     }
 });
-
-/**
- * 处理插件钩子
- * @param string $hook 钩子名称
- * @param mixed $params 传入参数
- * @return void
- */
-function hook($hook, $params = [])
-{
-    Hook::listen($hook, $params);
-}
 
 /**
  * 获取插件类的类名
@@ -168,8 +151,10 @@ function get_addon_config($name)
  */
 function addon_url($url, $param = [], $suffix = true, $domain = false)
 {
+    // url例如addon_url('test://Action/index'),test是插件名，Action是控制器名，index是方法名称
     $url = parse_url($url);
     $case = config('url_convert');
+
     $addons = $case ? Loader::parseName($url['scheme']) : $url['scheme'];
     $controller = $case ? Loader::parseName($url['host']) : $url['host'];
     $action = trim($case ? strtolower($url['path']) : $url['path'], '/');
