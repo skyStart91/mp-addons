@@ -7,35 +7,6 @@ https://github.com/5ini99/think-addons
 ## 安装
 > composer require skystart91/mp-addons
 
-## 配置
-### 公共配置
-```
-'addons'=>[
-    // 是否自动读取取插件钩子配置信息（默认是关闭）
-    'autoload' => false,
-    // 当关闭自动获取配置时需要手动配置hooks信息
-    'hooks' => [
-	    // 可以定义多个钩子
-        'testhook'=>'test' // 键为钩子名称，用于在业务中自定义钩子处理，值为实现该钩子的插件，
-					// 多个插件可以用数组也可以用逗号分割
-	]
-]
-```
-或者在application\extra目录中新建`addons.php`,内容为：
-```
-<?php
-return [
-    // 是否自动读取取插件钩子配置信息（默认是关闭）
-    'autoload' => false,
-    // 当关闭自动获取配置时需要手动配置hooks信息
-    'hooks' => [
-        // 可以定义多个钩子
-        'testhook'=>'test' // 键为钩子名称，用于在业务中自定义钩子处理，值为实现该钩子的插件，
-                    // 多个插件可以用数组也可以用逗号分割
-    ]
-];
-```
-
 ## 创建插件
 > 创建的插件可以在view视图中使用，也可以在php业务中使用
  
