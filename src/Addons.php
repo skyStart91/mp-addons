@@ -67,11 +67,6 @@ abstract class Addons
         $config = ['view_path' => $this->addons_path];
         $config = array_merge(Config::get('template'), $config);
         $this->view = new View($config, Config::get('view_replace_str'));
-
-        // 控制器初始化
-        // if (method_exists($this, '_initialize')) {
-        //     $this->_initialize();
-        // }
     }
 
     /**
