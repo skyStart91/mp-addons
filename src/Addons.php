@@ -99,7 +99,7 @@ abstract class Addons
         }
         $_config[$name] = $config;
         
-        return $_config;
+        return $config;
     }
 
     /**
