@@ -46,7 +46,7 @@ Hook::add('app_init', function () {
             // 格式化路径信息
             $info = pathinfo($addons_file);
 
-			// 去除作为排序
+			// 取出作为排序
 			$baseConfig = include $info['dirname'].DIRECTORY_SEPARATOR.'baseConfig.php';
 
             // 获取插件目录名
@@ -70,7 +70,7 @@ Hook::add('app_init', function () {
                 }
             }
 		}
-		// 排序(只针对hooks下的数组排序)
+		// 排序(只针对hooks下的数组排序,调整插件的执行顺序)
 		foreach($config['hooks']as &$h){
 			krsort($h);
 		}
