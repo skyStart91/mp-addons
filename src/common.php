@@ -33,7 +33,7 @@ Loader::addNamespace('addons', ADDON_PATH);
 // 闭包自动识别插件目录配置
 Hook::add('app_init', function () {
     // 当debug时不缓存配置
-    $config = App::$debug ? [] : Cache::get('addons', []);
+	$config = App::$debug ? [] : Cache::get('addons', []);
     if (empty($config)) {
         // 读取addons的配置
         $config = (array)Config::get('addons');
@@ -45,6 +45,10 @@ Hook::add('app_init', function () {
         foreach (glob(ADDON_PATH . '*/*.php') as $addons_file) {
             // 格式化路径信息
             $info = pathinfo($addons_file);
+
+			// 去除作为排序
+			$baseConfig = include $info['dirname'].DIRECTORY_SEPARATOR.'baseConfig.php';
+
             // 获取插件目录名
             $name = pathinfo($info['dirname'], PATHINFO_FILENAME);
             // 找到插件入口文件
@@ -54,18 +58,22 @@ Hook::add('app_init', function () {
                 
                 // 跟插件基类方法做比对，得到差异结果
                 $hooks = array_diff($methods, $base);
-                
+
                 // 循环将钩子方法写入配置中
                 foreach ($hooks as $hook) {
                     if (!isset($config['hooks'][$hook])) {
                         $config['hooks'][$hook] = [];
                     }
                     if (!in_array($name, $config['hooks'][$hook])) {
-                        $config['hooks'][$hook][] = $name;
+                        $config['hooks'][$hook][$baseConfig['sort']] = $name;
                     }
                 }
             }
-        }
+		}
+		// 排序(只针对hooks下的数组排序)
+		foreach($config['hooks']as &$h){
+			krsort($h);
+		}
         Cache::set('addons', $config);
     }
 
@@ -73,25 +81,29 @@ Hook::add('app_init', function () {
 
     // 获取系统配置
     $data = App::$debug ? [] : Cache::get('hooks', []);
-    $addons = (array)Config::get('addons.hooks');
-    
+	$addons = (array)Config::get('addons.hooks');
+	
     if (empty($data)) {
         // 初始化钩子
         foreach ($addons as $key => $values) {
+            
             if (is_string($values)) {
                 $values = explode(',', $values);
             } else {
                 $values = (array)$values;
             }
-            $addons[$key] = array_filter(array_map('get_addon_class', $values));
             
+            $addons[$key] = array_filter(array_map('get_addon_class', $values));
+
             Hook::add($key, $addons[$key]);
         }
+
         Cache::set('hooks', $addons);
     } else {
         
         Hook::import($data, false);
     }
+
 });
 
 /**
@@ -125,11 +137,14 @@ function get_addon_class($name, $type = 'hook', $class = null)
     return class_exists($namespace) ? $namespace : '';
 }
 
+function hook($hook, $params = []){
+    Hook::listen($hook, $params);
+}
+
 /**
  * 获取插件类的配置文件数组
  * @param string $name 插件名
  * @return array
- * 注意:这里的插件必须都得有入口文件，否则会出现重复配置现象
  */
 function get_addon_config($name)
 {

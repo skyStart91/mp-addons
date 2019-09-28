@@ -123,7 +123,7 @@ abstract class Addons
     {
         // 获取基本的插件信息
         $this->getInfo();
-        $info_check_keys = ['name', 'description', 'status', 'author', 'version'];
+        $info_check_keys = ['name', 'description', 'status', 'author', 'version', 'sort'];
         foreach ($info_check_keys as $value) {
             if (!array_key_exists($value, $this->info)) {
                 return false;
