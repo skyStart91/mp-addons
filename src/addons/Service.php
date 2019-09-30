@@ -71,8 +71,22 @@ class Service{
 	 /**
 	 * 安装插件
 	 */
-	public function installAddons(){
+	public function installAddons($addonName){
+		if(empty($addonName)) exit(returnJson('error', 0));
+		// 1.检查插件配置是否完整[包括baseConfig和config]
+		
+		// self::checkAddonsFullConfig($addonName);
+		
+		// 2.判断插件是否已安装
+		$addonsBaseConfig = getBaseConfig($addonName);
+		
+		// 3.将baseConfig中的status改为1
+		if($addonsBaseConfig['status'] == 1) exit(returnJson('插件已安装', 0));
 
+		// 4.查看是否需要有sql导入
+		self::importSql();
+		
+		return true;
 	}
 
 	 
