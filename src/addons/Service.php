@@ -100,7 +100,7 @@ class Service{
 	/**
 	 * 导入Sql
 	 */
-	public function importSql(){
+	public function importSql($addonName){
 		// 当前插件对象
 		$class = get_addon_class($addonName);
 		
