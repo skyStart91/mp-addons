@@ -70,40 +70,48 @@ class Service{
 	
 	 /**
 	 * 安装插件
+	 * @param string $addonName 插件名称
 	 */
-	public function installAddons($addonName){
+	public static function installAddons($addonName = ''){
 		if(empty($addonName)) exit(returnJson('error', 0));
 		
 		// 1.检查插件配置是否完整[包括baseConfig和config]
 		self::checkAddonsFullConfig($addonName);
 		
-		// 2.判断插件是否已安装
-		$addonsBaseConfig = getBaseConfig($addonName);
-		
-		// 3.判断插件是否已安装
-		if($addonsBaseConfig['status'] == 1) exit(returnJson('插件'.$addonName.'已安装', 0));
-
-		// 4.将baseConfig中的状态改为1
-		$class = get_addon_class($addonName);
-		
-		$dirName = dirname((new $class)->config_file);
-
-		$addonsBaseConfig['status'] = 1;
-
-		file_put_contents($dirName.DS.'baseConfig.php', "<?php \n return ".var_export($addonsBaseConfig, true).';');
-
-		// 5.查看是否需要有sql导入
-		self::importSql($addonName);
-		
+		self::installOrUninstall($addonName, 1);
 		return true;
 	}
-
 	 
 	/**
 	 * 卸载插件
 	 */
-	public function uninstallAddons(){
+	public static function uninstallAddons($addonName){
+		self::installOrUninstall($addonName, 0);
+		return true;
+	}
 
+	/**
+	 * 插件安装/卸载公共方法
+	 * $fg int 1:安装 0:卸载
+	 */
+	private static function installOrUninstall($addonName, $fg){
+		// 1.判断插件是否已卸载
+		$addonsBaseConfig = getBaseConfig($addonName);
+		
+		if($fg == $addonsBaseConfig['status']) exit(returnJson('插件'.$addonName.'已'.($fg? '安装': '卸载'), 0));
+
+		// 2.将baseConfig中的status改为0即可
+		$class = get_addon_class($addonName);
+		
+		$dirName = dirname((new $class)->config_file);
+
+		$addonsBaseConfig['status'] = 0;
+
+		file_put_contents($dirName.DS.'baseConfig.php', "<?php \n return ".var_export($addonsBaseConfig, true).';');
+
+		// 3.如果有sql导入了需要卸载
+		self::importSql($addonName, $fg);
+		return true;
 	}
 
 	/**
