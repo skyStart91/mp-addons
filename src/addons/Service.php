@@ -44,13 +44,13 @@ class Service{
 	 */
 	public function checkAddonsFullConfig($name){
 		// 检测插件是否存在
-		if(!$name) throw new Exception('插件不存在');
+		if(!$name) throw new Exception('插件'.$name.'不存在');
 		
 		// 检查配置的完整性
 		$sAddons = get_addon_class($name);
 		$oAddons = new $sAddons;
 		if(!$oAddons->checkInfo()){
-			throw new Exception('插件配置不完整');
+			throw new Exception('插件'.$name.'配置不完整');
 		}
 		return true;
 	}
@@ -73,18 +73,27 @@ class Service{
 	 */
 	public function installAddons($addonName){
 		if(empty($addonName)) exit(returnJson('error', 0));
-		// 1.检查插件配置是否完整[包括baseConfig和config]
 		
-		// self::checkAddonsFullConfig($addonName);
+		// 1.检查插件配置是否完整[包括baseConfig和config]
+		self::checkAddonsFullConfig($addonName);
 		
 		// 2.判断插件是否已安装
 		$addonsBaseConfig = getBaseConfig($addonName);
 		
-		// 3.将baseConfig中的status改为1
-		if($addonsBaseConfig['status'] == 1) exit(returnJson('插件已安装', 0));
+		// 3.判断插件是否已安装
+		if($addonsBaseConfig['status'] == 1) exit(returnJson('插件'.$addonName.'已安装', 0));
 
-		// 4.查看是否需要有sql导入
-		self::importSql();
+		// 4.将baseConfig中的状态改为1
+		$class = get_addon_class($addonName);
+		
+		$dirName = dirname((new $class)->config_file);
+
+		$addonsBaseConfig['status'] = 1;
+
+		file_put_contents($dirName.DS.'baseConfig.php', "<?php \n return ".var_export($addonsBaseConfig, true).';');
+
+		// 5.查看是否需要有sql导入
+		self::importSql($addonName);
 		
 		return true;
 	}
@@ -123,16 +132,52 @@ class Service{
 	}
 
 	/**
-	  * 启用插件
-	  */
-	public function resumeAddons(){
-
+	 * 启用/禁用插件
+	 * @param int $fg 1启用，0禁用
+	 */
+	public static function resumeOrForbidAddon($addonName, $fg){
+		$adResult = self::isReFb($addonName, $fg);
+		switch($adResult){
+			case -1: exit(returnJson('请先安装'.$addonName.'插件再操作', 0));
+			case -2: exit(returnJson('插件'.$addonName.'已'.($fg? '启用': '禁用').',无需重复操作', 0));
+		}
+		return true;
 	}
 
 	/**
-	 * 禁用插件
+	 * 插件是否安装
 	 */
-	public function forbidAddons(){
+	public static function alreadyInstall($addonName){
+		// 查看该插件是否已安装
+		$baseAddonConfig = getBaseConfig($addonName);
+		
+		if(0 == $baseAddonConfig['status']) return false;
+		
+		return true;
+	}
 
+	/**
+	 * 插件是否启用
+	 */
+	private static function isReFb($addonName, $resultFlag){
+		// 查看是否已安装
+		$bResult = self::alreadyInstall($addonName);
+		
+		if(!$bResult) return -1; // 未安装
+
+		// 使用已启/禁用
+		if($resultFlag == get_addon_config($addonName)['display']) return -2;
+
+		$class = get_addon_class($addonName);
+		
+		$addonConfigPath = (new $class)->config_file;
+
+		$addonConfig = include $addonConfigPath;
+
+		$addonConfig['display']['value'] = $resultFlag;
+
+		file_put_contents($addonConfigPath, "<?php \n return ".var_export($addonConfig, true).";");
+
+		return 0;
 	}
 }
