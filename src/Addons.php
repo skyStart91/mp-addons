@@ -113,6 +113,7 @@ abstract class Addons
     public function getInfo($name = ''){
         if(empty($name)) $name = $this->getName();
         $this->info = include $this->baseConfig_path;
+        return $this->info;
     }
 
     /**
