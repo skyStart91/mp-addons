@@ -101,7 +101,25 @@ class Service{
 	 * 导入Sql
 	 */
 	public function importSql(){
+		// 当前插件对象
+		$class = get_addon_class($addonName);
+		
+		$dirName = dirname((new $class)->config_file);
+		
+		// sql文件名必须和插件名相同
+		$sqlPath = $dirName.DS	.$addonName.'.sql';
+		
+		if(file_exists($sqlPath)){
+			$sql = file_get_contents($sqlPath);
+			
+			// 解析sql语句
+			$vSql = explode(';', $sql);
 
+			\app\common\model\Common::doQuery($vSql);
+
+			return true;
+		}
+		return false;
 	}
 
 	/**
