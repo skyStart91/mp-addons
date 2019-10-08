@@ -44,7 +44,7 @@ abstract class Addons
     public $info = [];
     public $addons_path = '';
     public $config_file = '';
-    protected $baseConfig_path = '';
+    public $baseConfig_path = '';
 
     /**
      * 架构函数
