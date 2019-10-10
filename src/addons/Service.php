@@ -5,7 +5,7 @@ class Service{
 	/**
 	 * 解压插件
 	 */
-	public function getUnZipAddons($name = '', $conflict = false){
+	public static function getUnZipAddons($name = '', $conflict = false){
 		if(empty($name)) throw new Exception('解压文件不能为空');
 		$zipFilePath = RUNTIME_PATH.'addons'.DS.$name.'.zip';
 		if(!is_file($zipFilePath)) throw new Exception($name.'文件不存在');
@@ -35,14 +35,14 @@ class Service{
 	/**
 	 * 备份插件
 	 */
-	public function backUpAddons(){
+	public static function backUpAddons(){
 
 	}
 
 	/**
 	 * 查看插件配置是否完整
 	 */
-	public function checkAddonsFullConfig($name){
+	public static function checkAddonsFullConfig($name){
 		// 检测插件是否存在
 		if(!$name) throw new Exception('插件'.$name.'不存在');
 		
@@ -117,7 +117,7 @@ class Service{
 	/**
 	 * 导入Sql
 	 */
-	public function importSql($addonName){
+	public static function importSql($addonName){
 		// 当前插件对象
 		$class = get_addon_class($addonName);
 		
