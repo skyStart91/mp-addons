@@ -100,7 +100,7 @@ class Service{
 		
 		if($fg == $addonsBaseConfig['status']) exit(returnJson('插件'.$addonName.'已'.($fg? '安装': '卸载'), 0));
 
-		// 2.将baseConfig中的status改为0即可
+		// 2.将baseConfig中的status改为0或1即可
 		$class = get_addon_class($addonName);
 		
 		$dirName = dirname((new $class)->config_file);
