@@ -73,7 +73,7 @@ class Service{
 	 * @param string $addonName 插件名称
 	 */
 	public static function installAddons($addonName = ''){
-		if(empty($addonName)) exit(returnJson('error', 0));
+		if(empty($addonName)) exit(returnJson('未知插件名', 0, '', true));
 		
 		// 1.检查插件配置是否完整[包括baseConfig和config]
 		self::checkAddonsFullConfig($addonName);
@@ -98,7 +98,7 @@ class Service{
 		// 1.判断插件是否已安装/卸载
 		$addonsBaseConfig = getBaseConfig($addonName);
 		
-		if($fg == $addonsBaseConfig['status']) exit(returnJson('插件'.$addonName.'已'.($fg? '安装': '卸载'), 0));
+		if($fg == $addonsBaseConfig['status']) exit(returnJson('插件'.$addonName.'已'.($fg? '安装': '卸载'), 0, '', true));
 
 		// 2.将baseConfig中的status改为0或1即可
 		$class = get_addon_class($addonName);
@@ -146,8 +146,8 @@ class Service{
 	public static function resumeOrForbidAddon($addonName, $fg){
 		$adResult = self::isReFb($addonName, $fg);
 		switch($adResult){
-			case -1: exit(returnJson('请先安装'.$addonName.'插件再操作', 0));
-			case -2: exit(returnJson('插件'.$addonName.'已'.($fg? '启用': '禁用').',无需重复操作', 0));
+			case -1: exit(returnJson('请先安装'.$addonName.'插件再操作', 0, '', true));
+			case -2: exit(returnJson('插件'.$addonName.'已'.($fg? '启用': '禁用').',无需重复操作', 0, '', true));
 		}
 		return true;
 	}
