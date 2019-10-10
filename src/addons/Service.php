@@ -95,7 +95,7 @@ class Service{
 	 * $fg int 1:安装 0:卸载
 	 */
 	private static function installOrUninstall($addonName, $fg){
-		// 1.判断插件是否已卸载
+		// 1.判断插件是否已安装/卸载
 		$addonsBaseConfig = getBaseConfig($addonName);
 		
 		if($fg == $addonsBaseConfig['status']) exit(returnJson('插件'.$addonName.'已'.($fg? '安装': '卸载'), 0));
@@ -105,7 +105,7 @@ class Service{
 		
 		$dirName = dirname((new $class)->config_file);
 
-		$addonsBaseConfig['status'] = 0;
+		$addonsBaseConfig['status'] = $fg;
 
 		file_put_contents($dirName.DS.'baseConfig.php', "<?php \n return ".var_export($addonsBaseConfig, true).';');
 
