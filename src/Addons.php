@@ -62,7 +62,9 @@ abstract class Addons
         if (is_file($this->addons_path . 'baseConfig.php')) {
             $this->baseConfig_path = $this->addons_path . 'baseConfig.php';
         }
-
+        // 当系统未安装时不执行当前插件
+        $baseConfig = $this->getInfo();
+        if(!$baseConfig['status']) exit;
         // 初始化视图模型
         $config = ['view_path' => $this->addons_path];
         $config = array_merge(Config::get('template'), $config);
